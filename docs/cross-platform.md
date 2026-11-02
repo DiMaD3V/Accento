@@ -1,6 +1,6 @@
 # Accento on Windows, Linux and macOS
 
-Accento now has native input implementations for Windows, Linux X11 and macOS. They use the same deterministic gesture engine and catalog. The React settings and the preference schema are shared. **The 0.5.0-beta.3 prerelease targets Windows x64 and universal macOS, through the private [M3GA17/Accento repository](https://github.com/M3GA17/Accento/releases/tag/v0.5.0-beta.3).** The Mac package is for tester feedback before stable 0.5.0.
+Accento now has native input implementations for Windows, Linux X11 and macOS. They use the same deterministic gesture engine and catalog. The React settings and the preference schema are shared. **The 0.5.0-beta.4 prerelease targets Windows x64 and universal macOS, through the private [M3GA17/Accento repository](https://github.com/M3GA17/Accento/releases/tag/v0.5.0-beta.4).** The Mac package is for tester feedback before stable 0.5.0.
 
 The planned **stable 0.5.0 release targets Windows and macOS**, including Intel and Apple Silicon Macs. Linux X11 and Wayland are deferred to a later release. The Linux implementation and build instructions below describe development support; they do not add Linux to the 0.5.0 release scope. See [the release requirements](RELEASING.md#050-stable-release-scope).
 

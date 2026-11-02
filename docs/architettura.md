@@ -49,3 +49,10 @@ La configurazione deve avere una versione di schema, valori predefiniti e gestio
 
 Il processo rimane inattivo quando non serve: nessuna animazione continua e nessuna scansione periodica del testo. RAM, CPU, dimensione installata e latenza devono essere misurate prima di pubblicare obiettivi o confronti.
 
+
+
+## Cornice e avvio automatico — beta 4
+
+Le impostazioni usano una finestra Tauri senza decorazioni e una barra React con i controlli finestra. L’avvio automatico è uno stato del sistema, letto e modificato tramite comandi Rust dedicati: non appartiene alla bozza JSON delle preferenze. Windows usa soltanto HKCU, con eseguibile quotato e argomento `--background`, e considera StartupApproved. macOS/Linux usano il plugin ufficiale Tauri; macOS registra un LaunchAgent dell’utente. Il percorso `--background` avvia il processo senza creare la WebView delle impostazioni.
+
+Le prove `--desktop-test` richiedono `ACCENTO_CONFIG_DIR` e persistono lo stato di avvio in quella directory, senza alterare l’avvio dell’utente. Il test del registro Windows usa invece chiavi dedicate sotto Software/Accento, esterne alle chiavi di esecuzione all’accesso.

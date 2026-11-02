@@ -3,7 +3,51 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const languages:{code:string;name:string}[]=require('../../localization/languages.json');
 const messages:Record<string,Record<string,string>>=require('../../localization/messages.json');
+const characters= require('../../localization/characters.json');
+const selectableLanguages=languages.filter(language=>Object.values(characters[language.code].maps).some((pairs:any)=>pairs.length));
 test.beforeEach(async({page})=>{await page.goto('/?preview=1');await expect(page.getByRole('heading',{name:'Generale',exact:true})).toBeVisible();});
+
+test('currencies can be selected individually without enabling unrelated symbols',async({page})=>{
+  const euro=page.locator('[data-currency="€"]');
+  const dollar=page.locator('[data-currency="$"]');
+  await expect(euro).toBeChecked();
+  await expect(dollar).not.toBeChecked();
+  await dollar.check();
+  await expect(page.locator('[data-currency]:checked')).toHaveCount(2);
+  await expect(euro).toBeChecked();
+  await expect(dollar).toBeChecked();
+  await expect(page.locator('[data-currency]:checked')).toHaveCount(2);
+  await page.getByRole('button',{name:'Salva modifiche'}).click();
+  await expect(page.getByRole('button',{name:'Salva modifiche'})).toBeDisabled();
+  await dollar.uncheck();
+  await page.getByRole('button',{name:'Annulla modifiche'}).click();
+  await expect(dollar).toBeChecked();
+});
+
+test('character sets omit languages with no additional characters while interface languages keep them',async({page})=>{
+  await expect(page.locator('[data-language="en"]')).toHaveCount(0);
+  await expect(page.locator('.sets-panel').getByRole('textbox')).toHaveCount(0);
+  await page.getByRole('button',{name:'Lingua dell’interfaccia: Italiano'}).click();
+  await page.getByRole('searchbox').fill('English');
+  await expect(page.getByRole('option',{name:'English',exact:true})).toBeVisible();
+});
+
+test('popup defaults to top and supports keyboard selection, save and discard',async({page})=>{
+  const top=page.getByRole('radio',{name:'In alto',exact:true});
+  const bottom=page.getByRole('radio',{name:'In basso',exact:true});
+  await expect(top).toBeChecked();
+  await top.focus();await page.keyboard.press('ArrowRight');
+  await expect(bottom).toBeChecked();
+  await page.getByRole('button',{name:'Annulla modifiche'}).click();
+  await expect(top).toBeChecked();
+  await bottom.check();await page.getByRole('button',{name:'Salva modifiche'}).click();
+  await expect(page.getByRole('button',{name:'Salva modifiche'})).toBeDisabled();
+  await page.getByRole('button',{name:'BlackList',exact:true}).click();
+  await page.getByRole('button',{name:'Generale',exact:true}).click();
+  await expect(bottom).toBeChecked();
+  await top.check();await page.getByRole('button',{name:'Annulla modifiche'}).click();
+  await expect(bottom).toBeChecked();
+});
 
 test('General combines basic controls and character sets without a separate set page',async({page})=>{
   for(const colorScheme of ['light','dark'] as const){
@@ -33,46 +77,53 @@ test('all national-language variants are searchable and translate the entire set
     await expect(page.getByRole('button',{name:dictionary.Save,exact:true})).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('data-accento-theme','dark');
     await expect(page.getByRole('heading',{name:dictionary.SpecialSets,exact:true})).toBeVisible();
-    await expect(page.locator('[data-special-set="currency"]')).toHaveAccessibleName(dictionary.Currency);
+    await expect(page.locator('[data-special-set="currency"]')).toHaveAccessibleName(dictionary.SpecialSets);
+    await expect(page.getByRole('radiogroup',{name:dictionary.PopupPosition})).toBeVisible();
+    await expect(page.getByRole('radio',{name:dictionary.PopupTop,exact:true})).toBeChecked();
     await page.getByRole('button',{name:dictionary.General,exact:true}).click();
   }
 });
 
-test('currency set is enabled initially, independent of languages, and supports save and discard',async({page})=>{
-  const currency=page.locator('[data-special-set="currency"]');
-  await expect(currency).toBeChecked();
+test('special-set bulk selection is independent of languages and supports save and discard',async({page})=>{
+  const special=page.locator('[data-special-set="currency"]');
+  await expect(special).toHaveJSProperty('indeterminate',true);
   await page.getByText('Valute · Varianti',{exact:true}).click();
   await expect(page.locator('.currency-details')).toContainText('€');
   await expect(page.locator('.currency-details')).toContainText('₱');
-  await currency.focus();await page.keyboard.press('Space');
-  await expect(currency).not.toBeChecked();
-  await expect(page.locator('[data-language="it"]')).toBeChecked();
+  await special.focus();await page.keyboard.press('Space');
+  await expect(special).toBeChecked();
+  expect(await page.locator('[data-currency]:checked').count()).toBeGreaterThan(20);
+  await expect(page.locator('[data-language]:checked')).toHaveCount(1);
+  await special.uncheck();
+  await expect(page.locator('[data-currency]:checked')).toHaveCount(0);
   await page.getByRole('button',{name:'Annulla modifiche'}).click();
-  await expect(currency).toBeChecked();
-  await currency.click();await page.getByRole('button',{name:'Salva modifiche'}).click();
+  await expect(page.locator('[data-currency="€"]')).toBeChecked();
+  await expect(page.locator('[data-currency]:checked')).toHaveCount(1);
+  await special.click();await special.uncheck();
+  await page.getByRole('button',{name:'Salva modifiche'}).click();
   await expect(page.getByRole('status')).toHaveText('Tutte le modifiche sono salvate');
   await page.getByRole('button',{name:'BlackList',exact:true}).click();
   await page.getByRole('button',{name:'Generale',exact:true}).click();
-  await expect(currency).not.toBeChecked();
-  await currency.click();await page.getByRole('button',{name:'Annulla modifiche'}).click();
-  await expect(currency).not.toBeChecked();
+  await expect(page.locator('[data-currency]:checked')).toHaveCount(0);
+  await page.locator('[data-currency="$"]').check();
+  await expect(page.locator('[data-currency]:checked')).toHaveCount(1);
+  await page.getByRole('button',{name:'Annulla modifiche'}).click();
+  await expect(page.locator('[data-currency]:checked')).toHaveCount(0);
 });
 
-test('compact set panel expands with keyboard and bulk selection preserves one language',async({page})=>{
-  const all=page.getByRole('checkbox',{name:'Tutte disponibili',exact:true});
+test('heading checkboxes replace global selection and language search while retaining one language',async({page})=>{
+  const all=page.getByRole('checkbox',{name:'Lingue',exact:true});
+  await expect(page.getByRole('checkbox',{name:'Tutte disponibili',exact:true})).toHaveCount(0);
+  await expect(page.locator('.sets-panel').getByRole('textbox')).toHaveCount(0);
   await expect(all).toHaveJSProperty('indeterminate',true);
-  await all.check();
-  await expect(page.locator('[data-language]:checked')).toHaveCount(languages.length);
-  await expect(page.locator('[data-special-set="currency"]')).toBeChecked();
+  await all.click();
+  await expect(page.locator('[data-language]:checked')).toHaveCount(selectableLanguages.length);
   await expect(all).toHaveJSProperty('indeterminate',false);
-  await page.getByRole('textbox',{name:'Cerca lingua'}).fill('Albanian');
-  await expect(page.locator('[data-language]')).toHaveCount(1);
-  await expect(page.locator('[data-language="sq"]')).toBeChecked();
-  await page.getByRole('textbox',{name:'Cerca lingua'}).fill('');
+  await expect(page.locator('[data-currency]:checked')).toHaveCount(1);
   await all.uncheck();
   await expect(page.locator('[data-language]:checked')).toHaveCount(1);
   await expect(page.getByRole('alert')).toHaveText('Mantieni almeno un set attivo.');
-  await expect(page.locator('[data-special-set="currency"]')).not.toBeChecked();
+  await expect(page.locator('[data-currency="€"]')).toBeChecked();
   const disclosure=page.locator('.sets-disclosure');
   await disclosure.focus();await page.keyboard.press('Enter');
   await expect(disclosure).toHaveAttribute('aria-expanded','false');
@@ -80,10 +131,6 @@ test('compact set panel expands with keyboard and bulk selection preserves one l
   await page.keyboard.press('Enter');
   await expect(disclosure).toHaveAttribute('aria-expanded','true');
   await expect(page.locator('[data-language]:checked')).toHaveCount(1);
-  await page.getByRole('button',{name:'Annulla modifiche'}).click();
-  await expect(page.locator('[data-special-set="currency"]')).toBeChecked();
-  await page.getByRole('textbox',{name:'Cerca lingua'}).fill('zzzzz');
-  await expect(page.getByText('Nessuna lingua trovata',{exact:true})).toBeVisible();
 });
 
 test('set checkboxes adapt to three, two and one column without horizontal overflow',async({page})=>{
@@ -107,26 +154,22 @@ test('Albanian selection is independent of interface language and can be saved',
   await expect(page.locator('[data-language="sq"]')).not.toBeChecked();
 });
 
-test('character sets have search, digraphs, all scripts and preserve the last active set',async({page})=>{
-  await expect(page.locator('[data-language]')).toHaveCount(languages.length);
+test('character sets expose all scripts and digraphs while preserving the last active language',async({page})=>{
+  await expect(page.locator('[data-language]')).toHaveCount(selectableLanguages.length);
   await page.locator('[data-language="it"]').click();
   await expect(page.getByRole('alert')).toHaveText('Mantieni almeno un set attivo.');
-  await page.getByRole('textbox',{name:'Cerca lingua'}).fill('Albanian');
-  await expect(page.locator('[data-language]')).toHaveCount(1);
   await expect(page.locator('[data-language="sq"]')).toHaveAttribute('aria-description',/dh/);
-  await page.locator('[data-language="sq"]').click();
-  await page.getByRole('textbox',{name:'Cerca lingua'}).fill('');
-  for(const code of ['el','ru','hy','ka','cnr-Cyrl'])await page.locator(`[data-language="${code}"]`).click();
+  for(const code of ['sq','el','ru','hy','ka','cnr-Cyrl'])await page.locator('[data-language="'+code+'"]').check();
   await page.getByRole('button',{name:'Salva modifiche'}).click();
-  for(const code of ['it','sq','el','ru','hy','ka','cnr-Cyrl'])await expect(page.locator(`[data-language="${code}"]`)).toBeChecked();
+  for(const code of ['it','sq','el','ru','hy','ka','cnr-Cyrl'])await expect(page.locator('[data-language="'+code+'"]')).toBeChecked();
 });
 
 test('delay validation, discard and pause preserve a draft',async({page})=>{
   const delay=page.getByRole('textbox',{name:'Ritardo di apertura'});
   await delay.fill('20');await page.getByRole('button',{name:'Salva modifiche'}).click();
   await expect(page.getByText('Inserisci un ritardo tra 100 e 1500 ms.')).toBeVisible();
-  await delay.fill('450');await page.getByRole('button',{name:'Spegni Accento'}).click();
-  await expect(delay).toHaveValue('450');await expect(page.getByText('Accento spento',{exact:true})).toBeVisible();
+  await delay.fill('450');await page.getByRole('button',{name:'Disattiva'}).click();
+  await expect(delay).toHaveValue('450');await expect(page.getByText('Non attivo',{exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Annulla modifiche'}).click();
   await expect(delay).toHaveValue('300');await expect(page.getByRole('button',{name:'Salva modifiche'})).toBeDisabled();
 });
@@ -184,4 +227,35 @@ test('Linux and macOS exclusions accept native process names and reject paths',a
     await page.getByRole('button',{name:'Salva modifiche'}).click();
     await expect(page.getByRole('status')).toHaveText('Tutte le modifiche sono salvate');
   }
+});
+
+test('unified app bar shows one brand, version and status and keeps sidebar actions at the bottom',async({page})=>{
+  await expect(page.locator('.brand strong')).toHaveText('Accento');
+  await expect(page.locator('.sidebar .brand')).toHaveCount(0);
+  await expect(page.locator('.app-bar .version')).toContainText('beta.4');
+  await expect(page.locator('.app-bar .runtime')).toHaveText('Attivo');
+  const nav=await page.getByRole('navigation').boundingBox(),workspace=await page.locator('.workspace').boundingBox();
+  expect(nav&&workspace&&Math.abs(nav.y-workspace.y-12)<1).toBeTruthy();
+  const exit=await page.getByRole('button',{name:'Esci',exact:true}).boundingBox(),save=await page.getByRole('button',{name:'Salva modifiche'}).boundingBox();
+  expect(exit&&save&&Math.abs((exit.y+exit.height)-(save.y+save.height))<1).toBeTruthy();
+  await page.getByRole('button',{name:'Disattiva',exact:true}).click();
+  await expect(page.locator('.app-bar .runtime')).toHaveText('Non attivo');
+  await expect(page.getByRole('button',{name:'Attiva',exact:true})).toHaveClass(/activate/);
+});
+
+test('launch at login applies immediately without losing a preferences draft',async({page})=>{
+  const startup=page.getByRole('checkbox',{name:'Avvio automatico',exact:true});
+  await expect(startup).not.toBeChecked();
+  await startup.check();
+  await expect(startup).toBeChecked();
+  await expect(page.getByRole('button',{name:'Salva modifiche'})).toBeDisabled();
+  await page.getByRole('textbox',{name:'Ritardo di apertura'}).fill('450');
+  await startup.uncheck();await startup.check();
+  await page.getByRole('button',{name:'BlackList',exact:true}).click();
+  await page.getByRole('button',{name:'Generale',exact:true}).click();
+  await expect(startup).toBeChecked();
+  await expect(page.getByRole('textbox',{name:'Ritardo di apertura'})).toHaveValue('450');
+  await page.getByRole('button',{name:'Annulla modifiche'}).click();
+  await expect(startup).toBeChecked();
+  await expect(page.getByRole('textbox',{name:'Ritardo di apertura'})).toHaveValue('300');
 });

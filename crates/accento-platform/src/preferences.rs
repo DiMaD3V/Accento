@@ -1,5 +1,5 @@
 use crate::i18n::{Text, UI_CODES, tr};
-use accento_core::Language;
+use accento_core::{Language, available_currencies};
 use serde::{Deserialize, Serialize};
 use std::{io, path::PathBuf};
 
@@ -12,6 +12,24 @@ pub enum Theme {
     Dark,
 }
 
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum PopupPosition {
+    #[default]
+    Top,
+    Bottom,
+}
+
+impl PopupPosition {
+    pub fn y(self, top: i32, bottom: i32, height: i32, margin: i32) -> i32 {
+        let last = (bottom - height).max(top);
+        match self {
+            Self::Top => (top + margin).min(last),
+            Self::Bottom => (last - margin).max(top),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(default)]
 pub struct Preferences {
@@ -19,6 +37,8 @@ pub struct Preferences {
     pub delay_ms: u64,
     pub languages: Vec<String>,
     pub currency_symbols: bool,
+    pub selected_currencies: Vec<String>,
+    pub popup_position: PopupPosition,
     pub theme: Theme,
     pub ui_language: String,
     pub excluded_apps: Vec<String>,
@@ -31,6 +51,8 @@ impl Default for Preferences {
             delay_ms: 300,
             languages: vec!["it".into()],
             currency_symbols: true,
+            selected_currencies: vec!["€".into()],
+            popup_position: PopupPosition::Top,
             theme: Theme::System,
             ui_language: "it".into(),
             excluded_apps: vec![],
@@ -39,6 +61,13 @@ impl Default for Preferences {
 }
 
 impl Preferences {
+    pub fn currencies(&self) -> Vec<String> {
+        if self.currency_symbols {
+            self.selected_currencies.clone()
+        } else {
+            vec![]
+        }
+    }
     pub fn languages(&self) -> Vec<Language> {
         self.languages
             .iter()
@@ -62,6 +91,17 @@ impl Preferences {
         }
         if !UI_CODES.contains(&self.ui_language.as_str()) {
             return Err(tr(&self.ui_language, Text::LanguageError).into());
+        }
+        let available = available_currencies();
+        if self
+            .selected_currencies
+            .iter()
+            .enumerate()
+            .any(|(index, symbol)| {
+                !available.contains(symbol) || self.selected_currencies[..index].contains(symbol)
+            })
+        {
+            return Err(tr(&self.ui_language, Text::ConfigError).into());
         }
         if self
             .excluded_apps
@@ -174,6 +214,60 @@ pub fn normalize_executable(value: &str) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn individual_currencies_and_popup_position_survive_serialization() {
+        let legacy: Preferences =
+            serde_json::from_str(r#"{"languages":["it"],"currency_symbols":false}"#).unwrap();
+        assert_eq!(legacy.selected_currencies, ["€"]);
+        assert_eq!(legacy.popup_position, PopupPosition::Top);
+        assert!(legacy.currencies().is_empty());
+        let preferences = Preferences {
+            selected_currencies: vec!["€".into(), "$".into()],
+            popup_position: PopupPosition::Bottom,
+            ..Preferences::default()
+        };
+        let restored: Preferences =
+            serde_json::from_str(&serde_json::to_string(&preferences).unwrap()).unwrap();
+        assert_eq!(restored, preferences);
+        assert_eq!(restored.currencies(), ["€", "$"]);
+        assert!(restored.validate().is_ok());
+        for selected_currencies in [vec!["invalid".into()], vec!["€".into(), "€".into()]] {
+            assert!(
+                Preferences {
+                    selected_currencies,
+                    ..preferences.clone()
+                }
+                .validate()
+                .is_err()
+            );
+        }
+        assert!(serde_json::from_str::<Preferences>(r#"{"popup_position":"left"}"#).is_err());
+        assert!(
+            Preferences {
+                selected_currencies: vec![],
+                ..preferences
+            }
+            .validate()
+            .is_ok()
+        );
+    }
+    #[test]
+    fn popup_position_uses_the_screen_bounds_and_stays_visible_on_small_screens() {
+        assert_eq!(PopupPosition::Top.y(40, 1040, 88, 32), 72);
+        assert_eq!(PopupPosition::Bottom.y(40, 1040, 88, 32), 920);
+        assert_eq!(PopupPosition::Top.y(-1080, -40, 176, 64), -1016);
+        assert_eq!(PopupPosition::Bottom.y(-1080, -40, 176, 64), -280);
+        for position in [PopupPosition::Top, PopupPosition::Bottom] {
+            assert_eq!(
+                position.y(0, 100, 88, 32),
+                if position == PopupPosition::Top {
+                    12
+                } else {
+                    0
+                }
+            );
+        }
+    }
     #[test]
     fn old_preferences_enable_currencies_and_an_explicit_opt_out_survives_serialization() {
         let mut preferences: Preferences = serde_json::from_str(r#"{"languages":["it"]}"#).unwrap();

@@ -37,6 +37,9 @@ pub fn tr(language: &str, key: Text) -> &'static str {
 }
 
 messages! {
+    PopupPosition => ["Posizione del pop-up","Position du pop-up","Posición del pop-up","Position des Pop-ups","Pop-up position","Pozicioni i dritares"],
+    PopupTop => ["In alto","En haut","Arriba","Oben","Top","Lart"],
+    PopupBottom => ["In basso","En bas","Abajo","Unten","Bottom","Poshtë"],
     AllAvailable => ["Tutte disponibili","Tous disponibles","Todos disponibles","Alle verfügbaren","All available","Të gjitha të disponueshme"],
     SpecialSets => ["Set speciali","Jeux spéciaux","Conjuntos especiales","Spezielle Zeichensätze","Special sets","Grupe të veçanta"],
     Currency => ["Valute","Devises","Divisas","Währungen","Currency","Monedha"],
@@ -44,7 +47,7 @@ messages! {
     KeepEditing => ["Continua a modificare", "Continuer la modification", "Seguir editando", "Weiter bearbeiten", "Keep editing", "Vazhdo redaktimin"],
     Settings => ["Impostazioni", "Paramètres", "Ajustes", "Einstellungen", "Settings", "Cilësimet"],
     General => ["Generale", "Général", "General", "Allgemein", "General", "Të përgjithshme"],
-    Sets => ["Set caratteri", "Jeux de caractères", "Conjuntos", "Zeichensätze", "Character sets", "Grupet e shkronjave"],
+    Sets => ["Caratteri disponibili","Jeux de caractères","Conjuntos","Zeichensätze","Character sets","Grupet e shkronjave"],
     Blacklist => ["BlackList", "BlackList", "BlackList", "BlackList", "Excluded applications", "Aplikacionet e përjashtuara"],
     GeneralHint => ["Scrittura e lingua. Tutto al suo posto.", "Écriture et langue, au même endroit.", "Escritura e idioma, en un solo lugar.", "Schreiben und Sprache an einem Ort.", "Writing and language. All in one place.", "Shkrimi dhe gjuha. Të gjitha në një vend."],
     SetsHint => ["Scegli i caratteri da avere a portata di mano.", "Choisissez les caractères à portée de main.", "Elige los caracteres que quieres tener a mano.", "Wähle die Zeichen, die du griffbereit brauchst.", "Choose the characters you want at hand.", "Zgjidhni shkronjat që dëshironi të keni pranë."],
@@ -76,10 +79,10 @@ messages! {
     Saved => ["Tutte le modifiche sono salvate", "Toutes les modifications sont enregistrées", "Todos los cambios están guardados", "Alle Änderungen sind gespeichert", "All changes are saved", "Të gjitha ndryshimet janë ruajtur"],
     CheckField => ["Controlla il campo evidenziato", "Vérifiez le champ indiqué", "Revisa el campo indicado", "Prüfe das markierte Feld", "Check the highlighted field", "Kontrolloni fushën e shënuar"],
     Pending => ["Modifiche da salvare", "Modifications à enregistrer", "Cambios sin guardar", "Ungespeicherte Änderungen", "Unsaved changes", "Ndryshime të paruajtura"],
-    Enabled => ["Accento attivo", "Accento actif", "Accento activo", "Accento aktiv", "Accento is on", "Accento është aktiv"],
-    Disabled => ["Accento spento", "Accento désactivé", "Accento desactivado", "Accento ausgeschaltet", "Accento is off", "Accento është joaktiv"],
-    TurnOn => ["Attiva Accento", "Activer Accento", "Activar Accento", "Accento einschalten", "Turn Accento on", "Aktivizo Accento"],
-    TurnOff => ["Spegni Accento", "Désactiver Accento", "Desactivar Accento", "Accento ausschalten", "Turn Accento off", "Çaktivizo Accento"],
+    Enabled => ["Attivo","Actif","Activo","Aktiv","Active","Aktiv"],
+    Disabled => ["Non attivo","Inactif","Inactivo","Nicht aktiv","Inactive","Joaktiv"],
+    TurnOn => ["Attiva","Activer","Activar","Aktivieren","Enable","Aktivizo"],
+    TurnOff => ["Disattiva","Désactiver","Desactivar","Deaktivieren","Disable","Çaktivizo"],
     Pause => ["Pausa", "Pause", "Pausa", "Pausieren", "Pause", "Pauzë"],
     Resume => ["Riprendi", "Reprendre", "Reanudar", "Fortsetzen", "Resume", "Vazhdo"],
     Exit => ["Esci", "Quitter", "Salir", "Beenden", "Exit", "Dil"],

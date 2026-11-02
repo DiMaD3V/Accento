@@ -2,13 +2,19 @@
 
 > Il sorgente comprende ora backend Windows, Linux X11 e macOS. Questa guida descrive in dettaglio Windows; per installazione, permessi, percorsi e verifiche degli altri sistemi consulta [la guida cross-platform](cross-platform.md). Wayland nativo non è supportato e il collaudo completo macOS richiede ancora un Mac. I pacchetti Windows locali precedenti al porting restano solo Windows.
 
-Accento 0.5.0-beta.3 comprende Windows 11 x64 e una beta universale macOS Intel / Apple Silicon. Questa guida descrive Windows; per installazione, permessi e prove Mac consulta [la checklist del tester](distribution/TEST-MACOS.it.txt). Inserisce accenti con tasti Glass indipendenti su fondo trasparente, lasciando il focus nel programma in cui scrivi. Su Windows le impostazioni React/Tauri richiedono Microsoft Edge WebView2 Runtime; su macOS usano la WebView di sistema. Le risorse sono incorporate e funzionano offline; non servono PowerToys o .NET.
+Accento 0.5.0-beta.4 comprende Windows 11 x64 e una beta universale macOS Intel / Apple Silicon. Questa guida descrive Windows; per installazione, permessi e prove Mac consulta [la checklist del tester](distribution/TEST-MACOS.it.txt). Inserisce accenti con tasti Glass indipendenti su fondo trasparente, lasciando il focus nel programma in cui scrivi. Su Windows le impostazioni React/Tauri richiedono Microsoft Edge WebView2 Runtime; su macOS usano la WebView di sistema. Le risorse sono incorporate e funzionano offline; non servono PowerToys o .NET.
 
 ## Avvio
 
 Esegui l’installer per l’utente corrente, oppure estrai l’intero ZIP portabile e apri `Accento.exe`. L’installer può scaricare WebView2 se manca; il portabile richiede un runtime già installato. Compare la finestra delle impostazioni e viene aggiunta un'icona nell'area di notifica. Chiudere le impostazioni lascia attivo Accento; dal menu dell'icona puoi scegliere Pausa, Riprendi, Impostazioni ed Esci. Un secondo avvio riapre le impostazioni dell'istanza già presente.
 
 Se stai usando anche Quick Accent o un'altra utility con lo stesso gesto, mettila in pausa durante la prova per evitare sovrapposizioni.
+
+## Avvio automatico in background
+
+In **Generale → Avvio automatico** abilita la checkbox per avviare Accento in background all’accesso al computer, senza aprire le impostazioni. La scelta si applica subito, è disattivata inizialmente e non viene annullata da Annulla modifiche. Per riaprire le impostazioni usa l’icona nell’area di notifica; per fermare il programma scegli Esci. Disabilitare la checkbox rimuove l’avvio automatico.
+
+Su Windows la registrazione riguarda soltanto l’utente corrente e non richiede amministratore. Lo stato riflette anche la disattivazione da Gestione attività. Su macOS viene usato un LaunchAgent dell’utente. Per il portabile, conserva Accento nel percorso scelto; prima di spostarlo o cancellarlo, disabilita l’avvio automatico e riabilitalo dalla nuova copia se necessario.
 
 ## Inserire un accento
 
@@ -23,7 +29,7 @@ La prima pressione di Spazio apre la barra con il primo candidato già seleziona
 
 ## Valute
 
-In **Generale → Set caratteri → Set speciali → Valute** puoi attivare o disattivare i simboli monetari, indipendentemente dalle lingue. Il set è attivo inizialmente, anche aprendo preferenze salvate da una versione precedente. La scelta si applica con **Salva modifiche**; **Annulla modifiche** ripristina quella salvata. Mantieni comunque almeno un set linguistico attivo.
+In **Generale → Caratteri disponibili → Set speciali → Valute** scegli i singoli simboli monetari, indipendentemente dalle lingue. Inizialmente è selezionato solo `€`. La checkbox accanto a **Set speciali** seleziona tutte le valute; quando tutte sono selezionate, un altro click le disattiva. Un trattino indica una selezione parziale. Puoi anche scegliere i simboli uno per volta. **Salva modifiche** applica la scelta e **Annulla modifiche** ripristina quella salvata. Mantieni almeno una lingua attiva.
 
 Con italiano e Valute attivi, `e` + Spazio offre `è`, `é`, `€`: gli accenti mantengono il loro ordine e i simboli vengono aggiunti in fondo, senza duplicati. Per inserire rapidamente `€`, apri la barra su `e`, premi Sinistra una volta e rilascia `e`. Con altre lingue attive la lista può contenere ulteriori varianti. Shift e Caps Lock non modificano i simboli monetari.
 
@@ -31,9 +37,11 @@ Il dettaglio **Valute · Varianti** mostra tutte le associazioni nelle impostazi
 
 ## Preferenze
 
-In Generale, il pannello **Set caratteri** si espande e si chiude dalla sua intestazione. Le lingue usano checkbox compatte in tre colonne, ridotte sulle finestre strette; i set speciali si trovano sotto. **Tutte disponibili** seleziona tutte le lingue e Valute; togliendo la selezione complessiva rimane attiva la prima lingua, perché il catalogo ne richiede almeno una. La ricerca filtra le lingue senza modificare le scelte.
+In Generale, il pannello **Caratteri disponibili** si espande e si chiude dalla sua intestazione. La checkbox a sinistra di **Lingue** seleziona tutti i repertori linguistici; togliendola rimane la prima lingua attiva, come richiesto dal catalogo. La checkbox accanto a **Set speciali** agisce solo sulle valute. I due gruppi sono indipendenti; un trattino segnala una selezione parziale. La card non contiene ricerca né un comando Seleziona tutto complessivo. La ricerca rimane nel menu della lingua dell’interfaccia.
 
-Le impostazioni hanno due pagine: **Generale** e **BlackList**. In Generale trovi ritardo e lingua dell’interfaccia affiancati, seguiti dal pannello Set caratteri per cercare e attivare le 47 raccolte. Le stesse 47 voci sono disponibili per l’interfaccia, indipendentemente dai caratteri attivi. Il tema delle impostazioni è sempre scuro.
+Le impostazioni hanno due pagine: **Generale** e **BlackList**. In Generale trovi ritardo, lingua dell’interfaccia e **Posizione del pop-up**, seguiti dal pannello Caratteri disponibili per attivare i 46 repertori che aggiungono caratteri. L’inglese non ha caratteri aggiuntivi e non compare tra i set; rimane tra le 47 lingue dell’interfaccia, indipendenti dai caratteri attivi. Il tema delle impostazioni è sempre scuro.
+
+**Posizione del pop-up** permette di scegliere **In alto** (predefinito) o **In basso**. Il pop-up rimane centrato orizzontalmente nell’area utile dello schermo e rispetta la scala del monitor. Anche questa scelta usa **Salva modifiche** e **Annulla modifiche**.
 
 **Annulla modifiche** ripristina l’ultima configurazione salvata. Chiudere con una bozza aperta richiede una scelta; senza modifiche la finestra web viene liberata.
 
@@ -44,7 +52,8 @@ Il ritardo si scrive nel campo. Tab attraversa i controlli; Invio e Spazio attiv
 | Preferenza | Comportamento |
 | --- | --- |
 | Ritardo | Da 100 a 1500 ms, inizialmente 300 ms dal primo Spazio |
-| Set caratteri | 47 voci nazionali/varianti scritte europee; almeno una attiva. Ricerca per nome o codice; [elenco completo](copertura-europa.md) |
+| Caratteri disponibili | 46 repertori con caratteri aggiuntivi; almeno uno attivo. Ricerca per nome o codice; [elenco completo](copertura-europa.md) |
+| Posizione del pop-up | Centrato in alto (predefinito) o in basso nell’area utile dello schermo |
 | Aspetto | Sempre scuro, senza selettore; Liquid Glass resta lo stile del popup |
 | Lingua dell’interfaccia | Stesse 47 voci della matrice, indipendenti dai set; nuove traduzioni in bozza, non revisionate da madrelingua |
 | BlackList | Un nome eseguibile per elemento, per esempio `notepad.exe`; Aggiungi o Invio inserisce la riga, × la rimuove. Duplicati, percorsi e nomi separati da virgole non sono accettati |
@@ -65,7 +74,7 @@ La sostituzione usa Backspace seguito da input Unicode nello stesso batch. Il co
 
 Il riconoscimento dei campi password è limitato ai controlli Edit che espongono lo stile protetto; non copre tutti i campi dei browser. Il selettore espone un nome accessibile con candidati e scelta e invia notifiche UI Automation quando un client ascolta. La verifica completa con Narrator rimane da eseguire.
 
-La beta Windows include un installer per l’utente corrente e uno ZIP portabile. Non include avvio automatico, aggiornamenti automatici, firma digitale, supporto ARM64 o pressione prolungata senza Spazio. I backend Linux X11 e macOS sono nel sorgente; stato delle prove e istruzioni sono nella guida cross-platform.
+La beta Windows include un installer per l’utente corrente e uno ZIP portabile. Non include aggiornamenti automatici, firma digitale, supporto ARM64 o pressione prolungata senza Spazio. I backend Linux X11 e macOS sono nel sorgente; stato delle prove e istruzioni sono nella guida cross-platform.
 
 ## Comandi facoltativi
 

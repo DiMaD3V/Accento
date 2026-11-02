@@ -875,7 +875,12 @@ unsafe fn update_picker() {
         let width = width.min(info.rcWork.right - info.rcWork.left - 32);
         let height = (crate::picker_material::HEIGHT * factor * scale).round() as i32;
         let x = info.rcWork.left + (info.rcWork.right - info.rcWork.left - width) / 2;
-        let y = info.rcWork.bottom - height - (32. * scale) as i32;
+        let y = prefs.popup_position.y(
+            info.rcWork.top,
+            info.rcWork.bottom,
+            height,
+            (32. * scale).round() as i32,
+        );
         let _ = SetWindowPos(
             hwnd,
             Some(HWND_TOPMOST),

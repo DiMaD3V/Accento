@@ -34,7 +34,7 @@ try {
     await invoke('save_settings', {preferences: {...snapshot.preferences, ui_language: 'en'}});
   });
   await page.getByRole('heading', {name: messages.General, exact: true}).waitFor();
-  assert.equal(await page.locator('.version').textContent(), `Accento ${version}`);
+  assert.equal(await page.locator('.version').textContent(), `v${version}`);
   await page.waitForFunction(() => document.querySelector('.brand-mark')?.naturalWidth > 0);
   await page.screenshot({path: `${output}/settings.png`});
   await page.locator('.sets-panel').screenshot({path: `${output}/character-sets.png`});
@@ -65,7 +65,7 @@ try {
     .footer{position:absolute;bottom:46px;left:72px;font-size:15px;color:#91a1b8;letter-spacing:.3px}.footer b{color:#d7e1ef;font-weight:500}
   </style><div class='hero'><div class='brand'><img src='${logo}'>Accento</div><div class='badge'>BETA 0.5 / WINDOWS</div>
     <h1>A little accent.<br>A smoother<br>sentence.</h1><p class='intro'>Accents and character variants,<br>right where you type.</p>
-    <div class='window'><div class='bar'><i class='dot'></i><i class='dot'></i><i class='dot'></i><span>Accento · Settings</span></div><img src='${settings}'></div>
+    <div class='window'><img src='${settings}'></div>
     <img class='sample' src='${picker}'><div class='hint'><strong>Hold e</strong> &nbsp; + &nbsp; <strong>tap Space</strong> &nbsp; → &nbsp; choose & release</div>
     <div class='footer'><b>47 language entries</b> &nbsp; · &nbsp; Native glass keys &nbsp; · &nbsp; Works offline</div></div>`);
   await page.screenshot({path: `${output}/hero.png`});

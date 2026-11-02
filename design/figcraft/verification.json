@@ -1,12 +1,12 @@
 {
   "result": "passed",
   "designVersion": "0.4.0",
-  "nativeSha256": "3cfd1902a5e6dc50e5a12e8e9f25f53f824ef5f649d303c5cfdff70763c7ed0f",
-  "pages": 9,
-  "boards": 53,
-  "inspectedNodes": 1948,
-  "prototypeLinks": 60,
-  "flows": 4,
+  "nativeSha256": "556bd6b387dad815433d49873ef2c433a21a7f7b26a88eb6e1d9293f6bc8389f",
+  "pages": 10,
+  "boards": 58,
+  "inspectedNodes": 2937,
+  "prototypeLinks": 68,
+  "flows": 5,
   "nativeGlassLayers": 41,
   "popupPixelChecks": [
     {
@@ -121,5 +121,70 @@
     "Transparent popup and Windows accessibility fallback",
     "Editable component library and real runtime captures"
   ],
-  "scope": "Design artifact verification; no Rust runtime or Windows compositor test."
+  "scope": "Design artifact verification; no Rust runtime or Windows compositor test.",
+  "proposal": {
+    "date": "2026-11-02",
+    "status": "Proposta grafica, software invariato",
+    "checks": [
+      "File nativo salvato, chiuso e riaperto",
+      "Nove pagine preesistenti identiche",
+      "Un solo nome Accento per schermata",
+      "Nessuna dicitura Impostazioni",
+      "Cornice componente condivisa",
+      "Navigazione dimostrativa Generale / BlackList",
+      "Stato e versione solo nell’app bar",
+      "Stati Attivo/Non attivo e azioni Disattiva/Attiva",
+      "Navigazione con margine superiore di 12 px",
+      "Gruppo azioni ancorato bottom: margine 18 px, intervallo 8 px, pulsanti 172×42",
+      "Disattiva rosso discreto / Attiva verde discreto",
+      "Card senza Seleziona tutto e senza ricerca",
+      "Checkbox davanti a Lingue e Set speciali, senza etichette aggiuntive",
+      "42 lingue e selezioni originali conservate",
+      "Vista aggiuntiva dei set speciali e delle valute",
+      "Cornice e tavola BlackList invariate"
+    ],
+    "previousPagesPreserved": true,
+    "exportedScreens": 5,
+    "visualReview": [
+      "Generale / cornice unificata",
+      "Generale / elenco lingue",
+      "BlackList / cornice unificata",
+      "Generale / non attivo",
+      "Card caratteri disponibili / selettori di gruppo",
+      "Generale / set speciali"
+    ],
+    "previousVerification": "Le verifiche pixel dei popup restano quelle del documento precedente: pagine e PNG preesistenti non modificati.",
+    "revision": 4,
+    "geometry": [
+      {
+        "board": 1974,
+        "bottomMargin": 18,
+        "gap": 8,
+        "navMargin": 12,
+        "state": "Attivo / Disattiva"
+      },
+      {
+        "board": 2120,
+        "bottomMargin": 18,
+        "gap": 8,
+        "navMargin": 12,
+        "state": "Attivo / Disattiva"
+      },
+      {
+        "board": 2168,
+        "bottomMargin": 18,
+        "gap": 8,
+        "navMargin": 12,
+        "state": "Attivo / Disattiva"
+      },
+      {
+        "board": 2314,
+        "bottomMargin": 18,
+        "gap": 8,
+        "navMargin": 12,
+        "state": "Non attivo / Attiva"
+      }
+    ],
+    "implementationVersion": "0.5.0-beta.4"
+  }
 }

@@ -68,6 +68,13 @@ impl Ui {
     pub fn picker(&self, view: Option<View>) {
         let view = view.map(PickerView::from);
         *self.state.picker.lock().unwrap() = view.clone();
+        let popup_position = self
+            .state
+            .snapshot
+            .lock()
+            .unwrap()
+            .preferences
+            .popup_position;
         let app = self.app.clone();
         let _ = self.app.run_on_main_thread(move || {
             if let Some(window) = app.get_webview_window("picker") {
@@ -79,14 +86,19 @@ impl Ui {
                         .or_else(|| app.primary_monitor().ok().flatten());
                     if let Some(monitor) = monitor {
                         let scale = monitor.scale_factor();
+                        let area = monitor.work_area();
                         let width = ((view.candidates.len().min(12) as f64) * 72. + 8.)
-                            .min(monitor.size().width as f64 / scale - 32.);
-                        let x = monitor.position().x as f64
-                            + (monitor.size().width as f64 - width * scale) / 2.;
-                        let y = monitor.position().y as f64 + monitor.size().height as f64
-                            - 160. * scale;
+                            .min(area.size.width as f64 / scale - 32.);
+                        let x =
+                            area.position.x as f64 + (area.size.width as f64 - width * scale) / 2.;
+                        let y = popup_position.y(
+                            area.position.y,
+                            area.position.y + area.size.height as i32,
+                            (88. * scale).round() as i32,
+                            (32. * scale).round() as i32,
+                        );
                         let _ = window.set_size(tauri::LogicalSize::new(width, 88.));
-                        let _ = window.set_position(tauri::PhysicalPosition::new(x, y));
+                        let _ = window.set_position(tauri::PhysicalPosition::new(x, f64::from(y)));
                     }
                     let _ = window.emit("accento-picker", Some(view));
                     let _ = window.show();
@@ -242,6 +254,7 @@ fn show_settings(app: &tauri::AppHandle) -> tauri::Result<()> {
             tauri::WebviewUrl::App("index.html".into()),
         )
         .title("Accento · Settings")
+        .decorations(false)
         .inner_size(1040., 780.)
         .min_inner_size(640., 540.)
         .build()?;
@@ -264,6 +277,7 @@ pub fn run() -> Result<(), String> {
     });
     let setup_state = state.clone();
     let builder = tauri::Builder::default()
+        .plugin(crate::startup::plugin())
         .manage(state.clone())
         .invoke_handler(tauri::generate_handler![
             get_settings,
@@ -272,7 +286,9 @@ pub fn run() -> Result<(), String> {
             get_picker,
             finish_desktop_test,
             quit_app,
-            crate::platform_info::get_platform
+            crate::platform_info::get_platform,
+            crate::startup::get_autostart,
+            crate::startup::set_autostart
         ])
         .on_page_load(|webview, payload| {
             if desktop_test()

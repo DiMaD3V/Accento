@@ -2,9 +2,9 @@
   "file": "Accento-Design-System.figcraft",
   "designVersion": "0.4.0",
   "runtimeVersion": "0.4.0",
-  "sha256": "3cfd1902a5e6dc50e5a12e8e9f25f53f824ef5f649d303c5cfdff70763c7ed0f",
-  "pages": 9,
-  "mainComponents": 28,
+  "sha256": "556bd6b387dad815433d49873ef2c433a21a7f7b26a88eb6e1d9293f6bc8389f",
+  "pages": 10,
+  "mainComponents": 29,
   "componentSets": 7,
   "variables": 41,
   "textStyles": 21,
@@ -485,6 +485,51 @@
       "height": 80,
       "kind": "runtime-capture",
       "preview": "runtime-picker-opening-dark-alpha-dark.png"
+    },
+    {
+      "id": 1974,
+      "name": "cornice-unificata-generale",
+      "mode": "Dark",
+      "width": 1040,
+      "height": 810,
+      "kind": "design-proposal",
+      "preview": "cornice-unificata-generale.png"
+    },
+    {
+      "id": 2120,
+      "name": "cornice-unificata-blacklist",
+      "mode": "Dark",
+      "width": 1040,
+      "height": 810,
+      "kind": "design-proposal",
+      "preview": "cornice-unificata-blacklist.png"
+    },
+    {
+      "id": 2168,
+      "name": "cornice-unificata-lingue",
+      "mode": "Dark",
+      "width": 1040,
+      "height": 810,
+      "kind": "design-proposal",
+      "preview": "cornice-unificata-lingue.png"
+    },
+    {
+      "id": 2314,
+      "name": "cornice-unificata-non-attivo",
+      "mode": "Dark",
+      "width": 1040,
+      "height": 810,
+      "kind": "design-proposal",
+      "preview": "cornice-unificata-non-attivo.png"
+    },
+    {
+      "id": 2736,
+      "name": "cornice-unificata-set-speciali",
+      "mode": "Dark",
+      "width": 1040,
+      "height": 810,
+      "kind": "design-proposal",
+      "preview": "cornice-unificata-set-speciali.png"
     }
   ],
   "components": [
@@ -935,6 +980,18 @@
       "name": "Picker",
       "page": 154,
       "type": "COMPONENT_SET"
+    },
+    {
+      "folder": [
+        "09 / Cornice unificata · Proposta 02.11.2026",
+        "Cornice applicazione"
+      ],
+      "id": 1952,
+      "instances": 5,
+      "label": "Unificata",
+      "name": "Cornice applicazione / Unificata",
+      "page": 1949,
+      "type": "COMPONENT"
     }
   ],
   "verification": "Saved, reopened, inspected, all boards exported; popup roots checked transparent and label-free.",
@@ -942,5 +999,13 @@
     "Windows glass uses a backdrop sampled once per gesture, not the FigCraft optical engine.",
     "Prototype navigation and save are demonstrations, not OS input or persistence.",
     "Native FigCraft glass does not prove Windows backdrop behaviour."
-  ]
+  ],
+  "proposal": {
+    "date": "2026-11-02",
+    "page": "09 / Cornice unificata · Proposta 02.11.2026",
+    "status": "Proposta grafica, software invariato",
+    "component": 1952,
+    "revision": 4,
+    "implementationVersion": "0.5.0-beta.4"
+  }
 }

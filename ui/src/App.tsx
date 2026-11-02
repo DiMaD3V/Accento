@@ -5,7 +5,7 @@ import * as api from './api';
 import {interfaceLanguages} from './catalog';
 import {CharacterSets} from './CharacterSets';
 import dictionaries from './messages.json';
-import {version} from '../../package.json';
+import {AppBar} from './AppBar';
 
 type Locale = keyof typeof dictionaries;
 type Message = keyof typeof dictionaries.it;
@@ -23,7 +23,8 @@ export function App() {
   const [draft,setDraft] = useState(api.defaults);
   const [delay,setDelay] = useState('300');
   const [section,setSection] = useState<Section>('General');
-  const [setQuery,setSetQuery] = useState('');
+  const [autostart,setAutostart] = useState(false);
+  const [autostartReady,setAutostartReady] = useState(false);
   const [paused,setPaused] = useState(false);
   const [platform,setPlatform] = useState<api.PlatformInfo>(api.previewPlatform);
   const [warning,setWarning] = useState<string|null>(null);
@@ -57,6 +58,11 @@ export function App() {
     finally{setLoading(false);}
   },[accept]);
   useEffect(()=>{
+    let disposed=false;
+    void api.autostart().then(value=>{if(!disposed){setAutostart(value);setAutostartReady(true);}}).catch(error=>{if(!disposed)setError(message(error));});
+    return()=>{disposed=true;};
+  },[]);
+  useEffect(()=>{
     let disposed=false;let stop:undefined|(()=>void);
     // Subscribe before reading so changes from the tray cannot slip between read and subscription.
     void api.subscribe(snapshot=>{if(!disposed) accept(snapshot);}).then(unlisten=>{
@@ -89,6 +95,10 @@ export function App() {
     setBusy(true);setError('');
     try{accept(await api.pause(!paused));}catch(error){setError(message(error));}finally{setBusy(false);}
   }
+  async function toggleAutostart(enabled:boolean){
+    setBusy(true);setError('');
+    try{setAutostart(await api.setAutostart(enabled));}catch(error){setError(message(error));}finally{setBusy(false);}
+  }
   function discard(){if(saved){setDraft(saved);setDelay(String(saved.delay_ms));setError('');setDelayError(false);setEntryError(undefined);}}
   async function close(){
     closeAllowed.current=true;setClosing(false);
@@ -99,18 +109,16 @@ export function App() {
     {loading?<p role="status">{t('Loading')}</p>:<><p role="alert">{error}</p><Button onPress={()=>void load()}>{t('Retry')}</Button></>}
   </div>;
   return <div className="shell">
+    <AppBar paused={paused} text={dictionaries[locale]} onError={setError}/>
     <aside className="sidebar">
-      <div className="brand"><BrandMark/><div><strong>Accento</strong><span>{t('Settings')}</span></div></div>
       <nav aria-label={t('Settings')}>{sections.map(({key,icon:Icon})=><Button key={key} variant="quiet" className={'nav-item '+(section===key?'selected':'')}
         aria-current={section===key?'page':undefined} onPress={()=>setSection(key)}><Icon size={19}/>{t(key)}</Button>)}</nav>
-      <div className="sidebar-bottom"><div className="runtime"><span className={'status-dot '+(paused?'off':'')}/><span>{t(paused?'Disabled':'Enabled')}</span></div>
-        <Button variant="secondary" disabled={busy} onPress={()=>void togglePause()}>{t(paused?'TurnOn':'TurnOff')}</Button>
-        {api.desktop&&<Button className="exit-app" variant="quiet" onPress={()=>{if(dirty){setQuitting(true);setClosing(true);}else void api.quit().catch(error=>setError(message(error)));}}>{t('Exit')}</Button>}
-        <span className="version">Accento {version}</span>
+      <div className="sidebar-bottom">
+        <Button variant="secondary" className={'power-action '+(paused?'activate':'deactivate')} disabled={busy} onPress={()=>void togglePause()}>{t(paused?'TurnOn':'TurnOff')}</Button>
+        <Button className="exit-app" variant="quiet" disabled={!api.desktop} onPress={()=>{if(dirty){setQuitting(true);setClosing(true);}else void api.quit().catch(error=>setError(message(error)));}}>{t('Exit')}</Button>
       </div>
     </aside>
     <div className="workspace">
-      {api.preview && <div className="preview-banner">Anteprima · dati temporanei</div>}
       <main id="main-content" key={section}>
         <header className="page-heading"><h1>{t(section)}</h1>
           {section==='Blacklist'&&<p>{t('BlacklistHint')}</p>}</header>
@@ -128,8 +136,22 @@ export function App() {
                 onValueChange={ui_language=>update({ui_language})} searchLabel={t('SearchLanguage')} searchPlaceholder={t('SearchLanguage')}
                 clearSearchLabel={t('ClearSearch')} emptyMessage={t('NoLanguage')} loadingLabel={t('Loading')}/>
             </section>
+            <section className="general-option"><h2 id="popup-position-label">{t('PopupPosition')}</h2>
+              <div className="popup-position" role="radiogroup" aria-labelledby="popup-position-label">
+                {(['top','bottom'] as const).map(position=><label key={position} className="position-option">
+                  <input type="radio" name="popup-position" value={position} checked={draft.popup_position===position} onChange={()=>update({popup_position:position})}/>
+                  <span>{t(position==='top'?'PopupTop':'PopupBottom')}</span>
+                </label>)}
+              </div>
+            </section>
+            <section className="general-option"><h2>{t('Autostart')}</h2>
+              <label className="set-option autostart-option">
+                <input type="checkbox" aria-label={t('Autostart')} aria-describedby="autostart-hint" checked={autostart} disabled={!autostartReady||busy} onChange={event=>void toggleAutostart(event.target.checked)}/>
+                <span className="set-checkbox" aria-hidden="true"><Check size={13}/></span><span id="autostart-hint">{t('AutostartHint')}</span>
+              </label>
+            </section>
           </div>
-          <CharacterSets draft={draft} update={update} onError={setError} query={setQuery} onQueryChange={setSetQuery} text={dictionaries[locale]}/>
+          <CharacterSets draft={draft} update={update} onError={setError} text={dictionaries[locale]}/>
         </>}
         {section==='Blacklist' && <>
           <form className="add-app" onSubmit={addApp}><TextBox label={t('AddApp')} description={t(platform.os==='windows'?'AppHint':'NativeAppHint')} placeholder={platform.executable_example} value={entry}

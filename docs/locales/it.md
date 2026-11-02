@@ -6,7 +6,7 @@ Apri Accento.exe su Windows. L'interfaccia delle impostazioni è sempre buia.
 
 Tieni premuta una lettera, premi e rilascia Spazio, quindi rilascia la lettera per inserire il carattere selezionato. Usa Sinistra, Destra o Spazio per cambiarlo. La fuga annulla.
 
-Generale → Set caratteri
+Generale → Caratteri disponibili
 
 Apri i set di caratteri e abilita le lingue in cui scrivi. Mantieni attivo almeno un set. I personaggi condivisi appaiono solo una volta.
 
@@ -20,7 +20,7 @@ La chiusura delle impostazioni lascia Accento in esecuzione nell'area di notific
 
 L'alfabeto standard e le associazioni dei tasti disponibili sono elencati di seguito. Digita normalmente le lettere ordinarie. Il popup supporta anche i digrafi e i segni di combinazione; non sostituisce un metodo di input.
 
-## Set caratteri · Italiano
+## Caratteri disponibili · Italiano
 
 a à b c d e é è f g h i ì j k l m n o ò p q r s t u ù v w x y z
 
@@ -34,7 +34,7 @@ a à b c d e é è f g h i ì j k l m n o ò p q r s t u ù v w x y z
 
 ## Set speciali · Valute
 
-Generale → Set caratteri → Set speciali → Valute
+Generale → Caratteri disponibili → Set speciali → Valute
 
 | Scrittura | Varianti |
 | --- | --- |

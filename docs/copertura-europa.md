@@ -2,7 +2,7 @@
 
 Il perimetro concordato comprende le lingue scritte ufficiali o nazionali degli Stati europei, microstati, Stati transcontinentali e Caucaso. Sono disponibili **47 voci**, contando separatamente Bokmål/Nynorsk e le varianti latine/cirilliche di bosniaco, serbo e montenegrino. Il latino è un supplemento istituzionale per la Santa Sede. Non è una promessa di copertura di ogni lingua regionale o minoritaria europea. [Fonti e precisazioni di status](copertura-europa-fonti.md).
 
-Ogni voce è presente in interfaccia, catalogo e guida rapida. Le nuove traduzioni sono bozze automatiche o redatte dall'assistente, con correzioni terminologiche esplicite; **non sono state revisionate da madrelingua**. Provenienza e stato sono registrati in localization/translation-status.json. Le guide localizzate coprono l'uso corrente; la ricerca e i rapporti storici restano nella lingua originale.
+Tutte le 47 voci sono disponibili per l’interfaccia e hanno una guida rapida. Nei set si mostrano solo i 46 repertori con caratteri aggiuntivi: l’inglese non ne aggiunge e rimane disponibile come lingua dell’interfaccia. Le nuove traduzioni sono bozze automatiche o redatte dall'assistente, con correzioni terminologiche esplicite; **non sono state revisionate da madrelingua**. Provenienza e stato sono registrati in localization/translation-status.json. Le guide localizzate coprono l'uso corrente; la ricerca e i rapporti storici restano nella lingua originale.
 
 | Codice | Lingua / variante | Paesi (codici geografici) | Scrittura | Documentazione |
 | --- | --- | --- | --- | --- |

@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {Check,ChevronDown} from 'lucide-react';
-import {Button,TextBox} from './components';
-import {characterSets} from './catalog';
+import {Button} from './components';
+import {characterSets,currencyOptions} from './catalog';
 import type {Preferences} from './api';
 import type dictionaries from './messages.json';
 import currencies from '../../localization/currencies.json';
@@ -10,29 +10,34 @@ type Props = {
   draft:Preferences;
   update:(change:Partial<Preferences>)=>void;
   onError:(message:string)=>void;
-  query:string;
-  onQueryChange:(value:string)=>void;
   text:typeof dictionaries.it;
 };
-const normalize=(value:string)=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-
-export function CharacterSets({draft,update,onError,query,onQueryChange,text}:Props) {
+export function CharacterSets({draft,update,onError,text}:Props) {
   const [expanded,setExpanded]=useState(true);
-  const allRef=useRef<HTMLInputElement>(null);
-  const allSelected=characterSets.every(set=>draft.languages.includes(set.code))&&draft.currency_symbols;
-  useEffect(()=>{if(allRef.current)allRef.current.indeterminate=!allSelected;},[allSelected]);
-  const filtered=characterSets.filter(set=>normalize([set.name,set.english,set.code,...set.countries].join(' ')).includes(normalize(query.trim())));
+  const languagesRef=useRef<HTMLInputElement>(null);
+  const specialRef=useRef<HTMLInputElement>(null);
+  const allLanguages=characterSets.every(set=>draft.languages.includes(set.code));
+  const allCurrencies=draft.currency_symbols&&currencyOptions.every(({symbol})=>draft.selected_currencies.includes(symbol));
+  const someCurrencies=draft.currency_symbols&&draft.selected_currencies.length>0;
+  useEffect(()=>{if(languagesRef.current)languagesRef.current.indeterminate=!allLanguages;},[allLanguages]);
+  useEffect(()=>{if(specialRef.current)specialRef.current.indeterminate=someCurrencies&&!allCurrencies;},[someCurrencies,allCurrencies]);
   function toggleSet(code:string) {
     const selected=draft.languages.includes(code);
-    if(selected&&draft.languages.length===1){onError(text.AtLeastOne);return;}
+    if(selected&&characterSets.filter(set=>draft.languages.includes(set.code)).length<=1){onError(text.AtLeastOne);return;}
     update({languages:selected?draft.languages.filter(item=>item!==code):[...draft.languages,code]});
   }
   function toggleAll() {
-    if(allSelected){
+    if(allLanguages){
       // Preserve the first active language: preferences always require one.
-      update({languages:draft.languages.slice(0,1),currency_symbols:false});
+      update({languages:[characterSets.find(set=>draft.languages.includes(set.code))?.code??'it']});
       onError(text.AtLeastOne);
-    }else update({languages:characterSets.map(set=>set.code),currency_symbols:true});
+    }else update({languages:characterSets.map(set=>set.code)});
+  }
+  function toggleSpecial(){
+    update(allCurrencies?{currency_symbols:false}:{currency_symbols:true,selected_currencies:currencyOptions.map(({symbol})=>symbol)});
+  }
+  function toggleCurrency(symbol:string) {
+    update({currency_symbols:true,selected_currencies:!draft.currency_symbols?[symbol]:draft.selected_currencies.includes(symbol)?draft.selected_currencies.filter(value=>value!==symbol):[...draft.selected_currencies,symbol]});
   }
   return <section className="sets-panel" aria-label={text.Sets}>
     <div className="sets-panel-header">
@@ -40,25 +45,32 @@ export function CharacterSets({draft,update,onError,query,onQueryChange,text}:Pr
         <span className="sets-panel-copy"><strong>{text.Sets}</strong></span>
         <ChevronDown size={17} className={expanded?'expanded':''}/>
       </Button>
-      <label className="set-option select-all"><input ref={allRef} type="checkbox" checked={allSelected} onChange={toggleAll}/><span className="set-checkbox" aria-hidden="true">{allSelected?<Check size={13}/>:<span className="mixed-mark"/>}</span><span>{text.AllAvailable}</span></label>
     </div>
     <div id="sets-panel-content" className="sets-panel-content" hidden={!expanded}>
       <section className="language-sets" aria-labelledby="language-sets-heading">
-        <div className="set-group-heading"><h2 id="language-sets-heading">{text.LanguageSets}</h2>
-          <TextBox aria-label={text.SearchLanguage} placeholder={text.SearchLanguage} value={query} onValueChange={onQueryChange} className="set-search"/>
+        <div className="set-group-heading"><h2 id="language-sets-heading"><label className="set-option set-group-toggle">
+          <input ref={languagesRef} type="checkbox" data-group="languages" checked={allLanguages} onChange={toggleAll}/>
+          <span className="set-checkbox" aria-hidden="true">{allLanguages?<Check size={13}/>:<span className="mixed-mark"/>}</span><span>{text.LanguageSets}</span>
+        </label></h2>
         </div>
-        <div className="sets-grid">{filtered.map(set=><label key={set.code} className="set-option" title={set.sample}>
+        <div className="sets-grid">{characterSets.map(set=><label key={set.code} className="set-option" title={set.sample}>
           <input type="checkbox" data-language={set.code} checked={draft.languages.includes(set.code)} aria-description={set.sample} onChange={()=>toggleSet(set.code)}/>
           <span className="set-checkbox" aria-hidden="true"><Check size={13}/></span><span>{set.name}</span>
         </label>)}</div>
-        {!filtered.length&&<p className="set-search-empty" role="status">{text.NoLanguage}</p>}
       </section>
       <section className="special-sets" aria-labelledby="special-sets-heading">
-        <div className="set-group-heading"><h2 id="special-sets-heading">{text.SpecialSets}</h2></div>
-        <div className="sets-grid"><label className="set-option" title="e → € · s → $ · l → £ · y → ¥">
-          <input type="checkbox" data-special-set="currency" checked={draft.currency_symbols} onChange={()=>update({currency_symbols:!draft.currency_symbols})}/>
-          <span className="set-checkbox" aria-hidden="true"><Check size={13}/></span><span>{text.Currency}</span>
-        </label></div>
+        <div className="set-group-heading"><h2 id="special-sets-heading"><label className="set-option set-group-toggle">
+          <input ref={specialRef} type="checkbox" data-special-set="currency" checked={allCurrencies} onChange={toggleSpecial}/>
+          <span className="set-checkbox" aria-hidden="true">{allCurrencies?<Check size={13}/>:someCurrencies?<span className="mixed-mark"/>:null}</span><span>{text.SpecialSets}</span>
+        </label></h2></div>
+        <p className="currency-caption">{text.Currency}</p>
+        <div className="sets-grid currency-options">
+          {currencyOptions.map(({symbol,keys})=><label key={symbol} className="set-option">
+            <input type="checkbox" data-currency={symbol} checked={draft.currency_symbols&&draft.selected_currencies.includes(symbol)} onChange={()=>toggleCurrency(symbol)}/>
+            <span className="set-checkbox" aria-hidden="true"><Check size={13}/></span>
+            <span className="currency-symbol">{symbol}</span><span className="currency-keys">{keys.join(' / ')}</span>
+          </label>)}
+        </div>
         <details className="currency-details"><summary>{text.Currency} · {text.Variants}</summary>
           <dl>{Object.entries(currencies).map(([key,symbols])=><div key={key}><dt><kbd>{key}</kbd></dt><dd>{symbols.join(' · ')}</dd></div>)}</dl>
         </details>

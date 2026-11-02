@@ -35,5 +35,15 @@
     "Explicit save, process-name exclusions, tray commands"
   ],
   "prototype": "Three-section navigation; theme and power links; error -> corrected draft -> saved demonstration.",
-  "limitations": "Runtime verification is documented separately. The prototype does not execute hooks or persistence. Narrator, external apps and physical multi-monitor tests remain open."
+  "limitations": "Runtime verification is documented separately. The prototype does not execute hooks or persistence. Narrator, external apps and physical multi-monitor tests remain open.",
+  "currentImplementation": {
+    "version": "0.5.0-beta.4",
+    "designPage": "09 / Cornice unificata",
+    "settings": "ui/src/App.tsx",
+    "appBar": "ui/src/AppBar.tsx",
+    "characters": "ui/src/CharacterSets.tsx",
+    "autostart": "crates/accento-windows/src/startup.rs",
+    "verification": "docs/verifiche-0.5.0-beta.4.md",
+    "note": "Le pagine precedenti e i riferimenti al runtime 0.4 restano storici."
+  }
 }

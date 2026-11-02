@@ -14,6 +14,13 @@
       throw new Error('Unexpected initial settings.');
     }
     checks.push('Native platform and preference IPC');
+    if(await invoke('get_autostart'))throw new Error('Isolated autostart must default to false.');
+    if(!(await invoke('set_autostart',{enabled:true})))throw new Error('Autostart enable failed.');
+    if(!(await invoke('get_autostart')))throw new Error('Autostart state did not persist.');
+    if(await invoke('set_autostart',{enabled:false}))throw new Error('Autostart disable failed.');
+    checks.push('Isolated launch-at-login enable, read and disable; real login items untouched');
+    if(await invoke('plugin:window|is_decorated'))throw new Error('Settings must use the unified app bar.');
+    checks.push('Undecorated settings window with the custom app bar');
     let rejected = false;
     try { await invoke('save_settings', {preferences: {...initial.preferences, delay_ms: 2}}); }
     catch { rejected = true; }

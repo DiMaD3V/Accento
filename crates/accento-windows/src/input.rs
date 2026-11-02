@@ -555,7 +555,7 @@ unsafe fn run(
         let mut message = MSG::default();
         let _ = PeekMessageW(&mut message, None, 0, 0, PM_NOREMOVE);
         let mut runtime = Runtime {
-            engine: Engine::new(prefs.languages(), prefs.delay_ms, prefs.currency_symbols),
+            engine: Engine::new(prefs.languages(), prefs.delay_ms, prefs.currencies()),
             prefs,
             ui,
             hwnd,
@@ -635,11 +635,9 @@ unsafe fn run(
                         match command {
                             Command::Configure(p) => {
                                 r.cancel();
-                                let effects = r.engine.configure(
-                                    p.languages(),
-                                    p.delay_ms,
-                                    p.currency_symbols,
-                                );
+                                let effects =
+                                    r.engine
+                                        .configure(p.languages(), p.delay_ms, p.currencies());
                                 r.prefs = p;
                                 r.effects(effects);
                             }

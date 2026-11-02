@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
 
-// Preserve the previous UI exactly, with intentional additions for Currency.
+// Intentional additions cover individual currencies, nonempty sets and popup placement.
 for (const viewport of [{width:1040,height:780},{width:640,height:620}]) {
   test(`settings appearance ${viewport.width}`, async ({page}) => {
     test.skip(process.platform !== 'win32', 'Pixel baselines use Windows fonts and rendering.');
@@ -17,6 +17,12 @@ for (const viewport of [{width:1040,height:780},{width:640,height:620}]) {
       await expect(page).toHaveScreenshot(`${viewport.width}-${name}.png`,{maxDiffPixels:0,threshold:0.01});
     };
     await capture('general');
+    await page.getByRole('button',{name:'Disattiva',exact:true}).click();
+    await capture('inactive');
+    await page.getByRole('button',{name:'Attiva',exact:true}).click();
+    await page.getByRole('checkbox',{name:'Avvio automatico',exact:true}).check();
+    await capture('autostart');
+    await page.getByRole('checkbox',{name:'Avvio automatico',exact:true}).uncheck();
     await page.getByRole('textbox',{name:'Ritardo di apertura'}).fill('20');
     await page.getByRole('button',{name:'Salva modifiche'}).click();
     await expect(page.getByText('Inserisci un ritardo tra 100 e 1500 ms.')).toBeVisible();
@@ -42,13 +48,12 @@ for (const viewport of [{width:1040,height:780},{width:640,height:620}]) {
     await page.locator('.sets-disclosure').click();
     await capture('sets-collapsed');
     await page.locator('.sets-disclosure').click();
-    await page.getByRole('checkbox',{name:'Tutte disponibili',exact:true}).check();
+    await page.getByRole('checkbox',{name:'Lingue',exact:true}).check();
     await capture('sets-all');
     await page.getByRole('button',{name:'Annulla modifiche'}).click();
     await page.getByText('Valute · Varianti',{exact:true}).click();
     await capture('currency-keys');
     await page.getByText('Valute · Varianti',{exact:true}).click();
-    await page.getByRole('textbox',{name:'Cerca lingua'}).fill('Albanian');
     await page.locator('[data-language="sq"]').click();
     await capture('sets-selected');
     await page.getByRole('button',{name:'BlackList',exact:true}).click();

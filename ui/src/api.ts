@@ -1,8 +1,8 @@
 import {invoke, isTauri} from '@tauri-apps/api/core';
 import {listen} from '@tauri-apps/api/event';
-export type Preferences = {schema_version:number;delay_ms:number;languages:string[];currency_symbols:boolean;theme:'system'|'light'|'dark';ui_language:string;excluded_apps:string[]};
+export type Preferences = {schema_version:number;delay_ms:number;languages:string[];currency_symbols:boolean;selected_currencies:string[];popup_position:'top'|'bottom';theme:'system'|'light'|'dark';ui_language:string;excluded_apps:string[]};
 export type Snapshot = {preferences:Preferences;paused:boolean;warning:string|null};
-export const defaults:Preferences = {schema_version:1,delay_ms:300,languages:['it'],currency_symbols:true,theme:'dark',ui_language:'it',excluded_apps:[]};
+export const defaults:Preferences = {schema_version:1,delay_ms:300,languages:['it'],currency_symbols:true,selected_currencies:['€'],popup_position:'top',theme:'dark',ui_language:'it',excluded_apps:[]};
 export const desktop = isTauri();
 // Browser preview is explicitly opt-in, transient, and never touches real user preferences.
 export const preview = !desktop && new URLSearchParams(location.search).get('preview') === '1';
@@ -31,3 +31,15 @@ export const previewPlatform:PlatformInfo = {os:new URLSearchParams(location.sea
 export async function platform():Promise<PlatformInfo> {return desktop?invoke('get_platform'):{...previewPlatform,executable_example:previewPlatform.os==='linux'?'firefox':previewPlatform.os==='macos'?'Safari':'notepad.exe'};}
 
 export async function quit():Promise<void>{if(desktop)await invoke('quit_app');}
+
+let sampleAutostart = false;
+export async function autostart():Promise<boolean> {
+  if(desktop)return invoke('get_autostart');
+  if(preview)return sampleAutostart;
+  throw new Error('Desktop connection required');
+}
+export async function setAutostart(enabled:boolean):Promise<boolean> {
+  if(desktop)return invoke('set_autostart',{enabled});
+  if(!preview)throw new Error('Desktop connection required');
+  sampleAutostart=enabled;return enabled;
+}

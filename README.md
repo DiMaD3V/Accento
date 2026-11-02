@@ -35,11 +35,11 @@ Writing *caffè*, *français* or *piñata* should not mean opening a character m
 
 For example: hold `e`, press and release Space, wait for the picker, then release `e` to insert `è`. Start with Shift or Caps Lock for uppercase variants. A quick gesture that ends before the picker opens preserves ordinary typing.
 
-The **Currency** special set is enabled initially: `e` also offers `€`, after the Italian accents `è` and `é`. Toggle it under **General → Character sets → Special sets** and expand its variants to see all key mappings, including `s` → `$`, `l` → `£` and `y` → `¥`. Symbols stay the same with Shift or Caps Lock.
+Choose individual currency symbols under **General → Character sets → Special sets → Currency**. Only `€` is selected initially, after the Italian accents `è` and `é` on `e`. Turning the group off and on preserves your selection. Symbols stay the same with Shift or Caps Lock.
 
 ## Get started
 
-**[Download Accento 0.5.0-beta.3](https://github.com/M3GA17/Accento/releases/tag/v0.5.0-beta.3)** — Windows x64 installer and portable ZIP, universal macOS app for Intel and Apple Silicon, and SHA-256 checksums. This repository is private; downloads require repository access. The Mac beta is ready for tester feedback on permissions and live typing before stable 0.5.0. See the [release notes](docs/releases/v0.5.0-beta.3.md).
+**[Download Accento 0.5.0-beta.4](https://github.com/M3GA17/Accento/releases/tag/v0.5.0-beta.4)** — Windows x64 installer and portable ZIP, universal macOS app for Intel and Apple Silicon, and SHA-256 checksums. Downloads are publicly available on GitHub. The Mac beta is ready for tester feedback on permissions and live typing before stable 0.5.0. See the [release notes](docs/releases/v0.5.0-beta.4.md).
 
 | Platform | Status |
 | --- | --- |
@@ -53,7 +53,7 @@ Stable 0.5.0 targets Windows and macOS. Linux X11 and Wayland are deferred to a 
 
 ### Windows installer
 
-Run `Accento_0.5.0-beta.3_windows-x64-setup.exe`. It installs for your Windows user and can download Microsoft Edge WebView2 Runtime if needed. An internet connection may be required for that prerequisite; Accento itself works offline.
+Run `Accento_0.5.0-beta.4_windows-x64-setup.exe`. It installs for your Windows user and can download Microsoft Edge WebView2 Runtime if needed. An internet connection may be required for that prerequisite; Accento itself works offline.
 
 ### Portable ZIP
 
@@ -79,7 +79,7 @@ An independent card for every variant, with the selected character ready to inse
 
 ### Settings that stay out of the way
 
-Set the delay, search your character sets and choose an interface language independently. Pause immediately, keep a draft, and save when ready.
+Set the delay, select languages and special sets with independent group checkboxes, and choose the interface language separately. Pause immediately, keep a draft, and save when ready.
 
 <p align="center">
   <img src="docs/assets/settings.png" width="960" alt="Accento Windows settings: opening delay, interface language and a short keyboard guide in the dark interface">
@@ -87,16 +87,19 @@ Set the delay, search your character sets and choose an interface language indep
 
 <details>
   <summary>Character sets and compact layout</summary>
-  <p align="center"><img src="docs/assets/character-sets.png" width="960" alt="Searchable character sets with language names, samples and selected states"></p>
+  <p align="center"><img src="docs/assets/character-sets.png" width="960" alt="Character sets with independent language and special-set checkboxes"></p>
   <p align="center"><img src="docs/assets/compact.png" width="560" alt="Compact Accento settings with top navigation and a persistent save button"></p>
 </details>
 
 ## Your languages, your workflow
 
-- **47 language entries and written variants**, including Latin, Greek, Cyrillic, Armenian and Georgian scripts. Search by language name or code.
+The unified app bar and sidebar show one app name, status and version; Enable / Disable and Exit stay at the bottom. **General → Launch at login** starts Accento in the background when you sign in. It is initially off and applies immediately, independently of the other preferences’ Save/Discard draft.
+
+- **47 interface languages and 46 character sets**, including Latin, Greek, Cyrillic, Armenian and Georgian scripts. English remains available for the interface and is omitted from character sets because it adds no characters. Interface-language search remains available; the character card has no search field or global selector.
 - **Separate interface and character choices.** Read the app in one language and activate several character sets.
 - **Complete candidate strings**, including supported digraphs and combining marks, with uppercase variants.
 - **Adjustable delay**, from 100 to 1500 ms; the default is 300 ms.
+- **Popup placement** at the top or bottom of the screen’s work area, centered horizontally; the default is top.
 - **Application exclusions** by executable name, such as `notepad.exe`.
 - **Notification-area controls** to pause, resume, open settings or exit. Closing settings keeps the engine running.
 

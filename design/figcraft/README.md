@@ -1,3 +1,7 @@
+> **Implementazione beta 4 — 2 novembre 2026:** la cornice e la card della pagina 09 sono ora implementate nel software. Le tavole conservano la proposta grafica approvata; la UI aggiunge anche l’avvio automatico richiesto successivamente. Schermate reali in `docs/assets/`; verifiche in `docs/verifiche-0.5.0-beta.4.md`.
+
+> **Proposta grafica del 2 novembre 2026:** apri la pagina **09 / Cornice unificata · Proposta 02.11.2026**. Barra superiore e sidebar condividono il componente `Cornice applicazione / Unificata`, con un solo nome Accento, logo di 16 px allineato al testo e senza la dicitura “Impostazioni”. Revisione 4: navigazione con un margine superiore di 12 px; stato con pallino e testo Attivo / Non attivo accanto al nome; versione nell’app bar; pulsante Attiva / Disattiva con tinte verdi / rosse discrete; azione ed Esci raccolti in un gruppo ancorato a 18 px dal fondo, con intervallo di 8 px e pulsanti della stessa misura. La card Caratteri disponibili non mostra più Seleziona tutto né la ricerca: una checkbox senza testo aggiuntivo precede Lingue e una precede Set speciali, con ambiti indipendenti. Lingue mostra la selezione parziale. Le tavole Generale, elenco lingue, BlackList, Generale non attivo e set speciali mostrano la proposta sulla palette scura corrente. I controlli finestra sono rappresentazioni grafiche; il prototipo collega Generale e BlackList. **Nessuna modifica al software; proposta ancora da approvare.** Le pagine 00–08 conservano il riferimento storico. Il generatore precedente non include la proposta: rigenerare il file la rimuoverebbe.
+
 # Accento / Interfacce finali · Liquid Glass
 
 Revisione del **16 ottobre 2026**, design e runtime **0.4.0**. Apri `Accento-Design-System.figcraft` e parti da **00 / Prodotto finale**. Le pagine 00–07 contengono testi, vettori, componenti e istanze modificabili. La pagina **08 / Prodotto implementato** incorpora **19 catture reali** dell’eseguibile verificato, comprese le interfacce in quattro lingue e le superfici del popup con alpha.
@@ -25,8 +29,9 @@ La tavola standard è 1000 × 800 DIP, inclusa la barra del titolo; il client Wi
 | 06 / Interazione e consegna | Contratto del gesto e corrispondenza con il runtime |
 | 07 / Area di notifica | Menu attivo/in pausa |
 | 08 / Prodotto implementato | 15 finestre reali e 4 superfici native del popup con alpha |
+| 09 / Cornice unificata | Proposta del 2 novembre 2026: Generale, elenco lingue, BlackList e componente condiviso |
 
-**9 pagine, 53 tavole, 28 componenti principali, 7 set, 41 variabili e 21 stili tipografici.** Il prototipo contiene 60 collegamenti verificati: navigazione, aspetto, interruttore e un percorso dimostrativo errore → correzione → salvataggio. Non esegue hook, digitazione o persistenza; i controlli senza collegamenti sono riferimenti visivi.
+**10 pagine, 58 tavole, 29 componenti principali, 7 set, 41 variabili e 21 stili tipografici.** Il prototipo contiene 68 collegamenti verificati: navigazione, aspetto, interruttore e un percorso dimostrativo errore → correzione → salvataggio. Non esegue hook, digitazione o persistenza; i controlli senza collegamenti sono riferimenti visivi.
 
 ## File e rigenerazione
 

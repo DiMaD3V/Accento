@@ -55,3 +55,11 @@ il motore di digitazione o leggere il contenuto dei tuoi documenti.
 
 Le preferenze sono in ~/Library/Application Support/Accento/settings.json.
 Per rimuovere la beta scegli Esci e sposta Accento.app nel Cestino.
+
+NUOVA BETA 4 — AVVIO AUTOMATICO E CORNICE
+In Generale abilita Avvio automatico, esci dalla sessione e rientra: Accento
+deve restare in background, senza impostazioni aperte. Riaprile dall’icona,
+disabilita l’opzione e ripeti l’accesso: il programma non deve avviarsi.
+Verifica anche trascinamento, riduzione a icona, massimizzazione/ripristino,
+chiusura con bozza e uscita effettiva. Riporta processore, macOS e risultato.
+I controlli automatici di build non certificano un accesso reale né i permessi.

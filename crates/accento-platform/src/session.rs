@@ -37,7 +37,7 @@ impl Session {
             engine: Engine::new(
                 preferences.languages(),
                 preferences.delay_ms,
-                preferences.currency_symbols,
+                preferences.currencies(),
             ),
             preferences,
             paused: false,
@@ -48,7 +48,7 @@ impl Session {
         let effects = self.engine.configure(
             preferences.languages(),
             preferences.delay_ms,
-            preferences.currency_symbols,
+            preferences.currencies(),
         );
         self.preferences = preferences;
         let _ = self.apply(effects, host);
@@ -66,7 +66,7 @@ impl Session {
         self.engine = Engine::new(
             self.preferences.languages(),
             self.preferences.delay_ms,
-            self.preferences.currency_symbols,
+            self.preferences.currencies(),
         );
         self.down.clear();
         host.picker(None);
@@ -239,7 +239,13 @@ mod tests {
         session.reset(&mut host);
         event(&mut session, &mut host, 46, Key::Letter('l'), true, 500);
         assert!(!event(&mut session, &mut host, 65, Key::Space, true, 501));
-        session.configure(Preferences::default(), &mut host);
+        session.configure(
+            Preferences {
+                selected_currencies: vec!["£".into()],
+                ..Preferences::default()
+            },
+            &mut host,
+        );
         session.reset(&mut host);
         event(&mut session, &mut host, 46, Key::Letter('l'), true, 600);
         assert!(event(&mut session, &mut host, 65, Key::Space, true, 601));

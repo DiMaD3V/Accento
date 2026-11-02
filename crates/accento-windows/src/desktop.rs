@@ -59,6 +59,7 @@ pub fn show_settings() {
                 tauri::WebviewUrl::App("index.html".into()),
             )
             .title("Accento · Impostazioni")
+            .decorations(false)
             .inner_size(1040., 780.)
             .min_inner_size(640., 540.)
             .build()
@@ -127,6 +128,8 @@ pub fn run() -> Result<(), String> {
         .manage(Bridge(sender))
         .invoke_handler(tauri::generate_handler![
             crate::platform_info::get_platform,
+            crate::startup::get_autostart,
+            crate::startup::set_autostart,
             quit_app,
             get_settings,
             save_settings,

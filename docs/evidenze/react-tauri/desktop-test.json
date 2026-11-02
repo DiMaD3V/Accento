@@ -1,11 +1,15 @@
 {
   "passed": true,
-  "executable": "C:\\PROJECTS\\Github\\Accento\\target\\verify-beta3\\final-bl7xhqgx\\installer\\Accento.exe",
+  "executable": "C:\\PROJECTS\\Github\\Accento\\target\\release\\Accento.exe",
   "loadedUrl": "http://tauri.localhost/",
   "locales": 47,
   "checks": [
     "Tauri/WebView2 startup",
-    "currency toggle saves independently and persists through Rust IPC",
+    "custom app bar: undecorated window, maximize/restore/minimize",
+    "autostart IPC enables/disables and persists in an isolated test profile; real login entries untouched",
+    "individual currencies and popup position persist through Rust IPC",
+    "invalid currency selections and popup positions rejected",
+    "separate special-set bulk selection persists without changing languages",
     "Rust get/save/pause IPC",
     "invalid configuration rejected without changing state",
     "all national locales and character sets accepted",
@@ -13,7 +17,9 @@
     "atomic persisted preferences",
     "React receives native state events",
     "unsaved draft close protection",
-    "webview closes while backend remains running"
+    "webview closes while backend remains running",
+    "background launch from a path with spaces has no visible application windows; probe detects the normal foreground launch"
   ],
-  "keyboardHook": false
+  "keyboardHook": false,
+  "executableSha256": "96c42807523cfb5b2c1b8b4652e377e07a15a08e965fce83dc7e33a098a9c4b3"
 }

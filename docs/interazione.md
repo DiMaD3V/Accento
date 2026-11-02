@@ -47,7 +47,7 @@ Un errore parziale di inserimento può aver già modificato il testo. Il prototi
 
 ## Posizione e impostazioni
 
-La prima posizione proposta è in basso al centro dell'area utile del monitor della finestra attiva. La barra deve rimanere dentro l'area utile e adattarsi alla scala del monitor. Il rilevamento del cursore di testo arriverà come modalità aggiuntiva con ritorno alla posizione fissa.
+La posizione predefinita è in alto al centro dell’area utile del monitor. In **Generale → Posizione del pop-up** si può scegliere anche in basso, sempre centrato orizzontalmente. Su Windows si usa il monitor della finestra attiva; su macOS/Linux il monitor del puntatore, con ritorno al principale. La barra rimane nell’area utile e si adatta alla scala del monitor. Il rilevamento del cursore di testo resta una possibile modalità aggiuntiva.
 
 La finestra impostazioni riceve il focus quando viene aperta esplicitamente. Un campo di prova mostra come usare il gesto e consente di sperimentare il ritardo. L'area di notifica offre almeno Pausa, Riprendi, Impostazioni ed Esci.
 

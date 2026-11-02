@@ -19,11 +19,11 @@ Per scrivere *caffè*, *français* o *piñata* non dovrebbe servire aprire una m
 
 Per le maiuscole, inizia con Shift o Caps Lock. Se termini il gesto prima dell'apertura, viene mantenuta la digitazione ordinaria.
 
-Il set **Valute** è attivo inizialmente: sulla `e` trovi anche `€`, dopo `è` e `é`. Puoi disattivarlo in **Generale → Set caratteri → Set speciali**, dove trovi tutte le associazioni, per esempio `s` → `$`, `l` → `£`, `y` → `¥`. [Come inserire le valute](docs/uso.md#valute).
+In **Generale → Set caratteri → Set speciali → Valute** scegli i singoli simboli da aggiungere: inizialmente è selezionato solo `€`, dopo `è` e `é` sulla `e`. La checkbox accanto a Set speciali seleziona tutte le valute o le disattiva; le selezioni di lingue e valute restano indipendenti. [Come inserire le valute](docs/uso.md#valute).
 
 ## Stato della beta
 
-**[Scarica Accento 0.5.0-beta.3](https://github.com/M3GA17/Accento/releases/tag/v0.5.0-beta.3)** — installer e ZIP portabile Windows x64, app universale macOS per Intel e Apple Silicon e checksum SHA-256. Il repository è privato: per scaricare serve l’accesso al repository. Questa beta raccoglie il feedback sulle prove reali Mac prima della 0.5 stabile. [Note della release](docs/releases/v0.5.0-beta.3.md).
+**[Scarica Accento 0.5.0-beta.4](https://github.com/M3GA17/Accento/releases/tag/v0.5.0-beta.4)** — installer e ZIP portabile Windows x64, app universale macOS per Intel e Apple Silicon e checksum SHA-256. I pacchetti sono disponibili pubblicamente su GitHub. Questa beta raccoglie il feedback sulle prove reali Mac prima della 0.5 stabile. [Note della release](docs/releases/v0.5.0-beta.4.md).
 
 | Sistema | Stato |
 | --- | --- |
@@ -47,12 +47,17 @@ Non servono PowerToys, .NET, Node.js o Rust per usare l'app. I binari beta non s
 
 Apri il DMG e trascina `Accento.app` in Applicazioni, oppure estrai lo ZIP universale e sposta lì l'app. La beta ha firma ad hoc e non è notarizzata: se macOS blocca il download attendibile, segui la [procedura Apple Apri comunque](https://support.apple.com/it-it/102445). Concedi Accessibilità e, se richiesto, Monitoraggio input. Esci e riapri la copia installata se necessario, poi riattiva Accento. La [guida alle prove Mac](docs/distribution/TEST-MACOS.it.txt) è inclusa nelle risorse dell'app e allegata alla release. Digitazione e flusso dei permessi attendono il riscontro del tester.
 
+## Interfaccia e avvio automatico
+
+Barra superiore e navigazione condividono una cornice: nome unico, stato e versione in alto; Attiva / Disattiva con colori discreti ed Esci in basso. In **Generale → Avvio automatico** puoi avviare Accento in background all’accesso al computer. La scelta si applica subito e resta indipendente da Salva/Annulla delle altre preferenze. È disattivata inizialmente.
+
 ## Lingue e impostazioni
 
-- **47 voci linguistiche e varianti scritte**, comprese scritture latina, greca, cirillica, armena e georgiana.
-- Lingua dell'interfaccia e set caratteri indipendenti, con ricerca e selezione di più set.
+- **47 lingue dell’interfaccia e 46 set con caratteri aggiuntivi**, comprese scritture latina, greca, cirillica, armena e georgiana. L’inglese resta disponibile per l’interfaccia e non compare nei set perché non aggiunge caratteri.
+- Lingua dell'interfaccia e set caratteri indipendenti: ricerca nella scelta della lingua dell’interfaccia e selettori separati per tutti i set linguistici e speciali.
 - Candidati completi, inclusi i digrammi e i segni combinanti supportati, con le rispettive maiuscole.
 - Ritardo da 100 a 1500 ms, inizialmente 300 ms.
+- Pop-up centrato in alto o in basso nell’area utile dello schermo, con posizione iniziale in alto.
 - BlackList per nome dell'eseguibile, pausa immediata, bozza con Salva/Annulla e protezione dalla chiusura con modifiche non salvate.
 
 <p align="center"><img src="docs/assets/settings.png" width="960" alt="Le impostazioni di Accento nell'app Windows, catturate con un profilo di esempio in inglese"></p>

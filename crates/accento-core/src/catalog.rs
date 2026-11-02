@@ -1,12 +1,36 @@
 include!("catalog_generated.rs");
 
+impl Language {
+    pub fn has_characters(self) -> bool {
+        CHARACTER_MAPS.iter().any(|(code, entries)| {
+            *code == self.code()
+                && entries.iter().any(|(key, lower, upper)| {
+                    (!lower.is_empty() && *lower != key.to_string())
+                        || (!upper.is_empty() && *upper != key.to_uppercase().to_string())
+                })
+        })
+    }
+}
+
+pub fn available_currencies() -> Vec<String> {
+    let mut result = Vec::new();
+    for (_, symbols) in CURRENCY_MAPS {
+        for symbol in *symbols {
+            if !result.iter().any(|value| value == symbol) {
+                result.push((*symbol).to_owned());
+            }
+        }
+    }
+    result
+}
+
 /// Unicode text candidates, stable order and no duplicates across selected languages.
 /// Digraphs are typed normally; source coverage and optional extensions live in localization/.
 pub fn candidates(
     base: char,
     uppercase: bool,
     languages: &[Language],
-    currency_symbols: bool,
+    selected_currencies: &[String],
 ) -> Vec<String> {
     let mut result = Vec::new();
     for language in languages {
@@ -30,11 +54,11 @@ pub fn candidates(
     }
     // Symbols follow language variants, preserving the usual first selection.
     // Currency symbols have no case and do not depend on the selected languages.
-    if currency_symbols
-        && let Some((_, symbols)) = CURRENCY_MAPS.iter().find(|(key, _)| *key == base)
-    {
+    if let Some((_, symbols)) = CURRENCY_MAPS.iter().find(|(key, _)| *key == base) {
         for symbol in *symbols {
-            if !result.iter().any(|value| value == symbol) {
+            if selected_currencies.iter().any(|value| value == symbol)
+                && !result.iter().any(|value| value == symbol)
+            {
                 result.push((*symbol).to_owned());
             }
         }
@@ -46,26 +70,83 @@ pub fn candidates(
 mod tests {
     use super::*;
     #[test]
+    fn only_selected_currencies_are_added_on_every_associated_key() {
+        let selected = vec!["€".into(), "₽".into()];
+        assert_eq!(
+            candidates('e', false, &[Language::Italian], &selected),
+            ["è", "é", "€"]
+        );
+        for uppercase in [false, true] {
+            assert_eq!(
+                candidates('p', uppercase, &[Language::Italian], &selected),
+                ["₽"]
+            );
+            assert_eq!(
+                candidates('r', uppercase, &[Language::Italian], &selected),
+                ["₽"]
+            );
+            assert!(candidates('s', uppercase, &[Language::Italian], &selected).is_empty());
+            assert!(candidates('l', uppercase, &[Language::Italian], &selected).is_empty());
+        }
+    }
+    #[test]
+    fn every_selectable_language_has_reachable_additional_characters() {
+        let source: serde_json::Value =
+            serde_json::from_str(include_str!("../../../localization/characters.json")).unwrap();
+        for language in Language::ALL {
+            let maps = source[language.code()]["maps"].as_object().unwrap();
+            let reachable = maps
+                .keys()
+                .flat_map(|key| {
+                    let base = key.chars().next().unwrap();
+                    candidates(base, false, &[*language], &[])
+                        .into_iter()
+                        .chain(candidates(base, true, &[*language], &[]))
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(
+                language.has_characters(),
+                !reachable.is_empty(),
+                "{}",
+                language.code()
+            );
+        }
+        assert!(!Language::English.has_characters());
+        assert_eq!(
+            Language::ALL
+                .iter()
+                .filter(|language| language.has_characters())
+                .count(),
+            46
+        );
+    }
+    #[test]
     fn currencies_follow_accents_in_every_language_and_do_not_change_case() {
         assert_eq!(
-            candidates('e', false, &[Language::Italian], true),
+            candidates('e', false, &[Language::Italian], &available_currencies()),
             ["è", "é", "€"]
         );
         assert_eq!(
-            candidates('e', true, &[Language::Italian], true),
+            candidates('e', true, &[Language::Italian], &available_currencies()),
             ["È", "É", "€"]
         );
         for language in Language::ALL {
             for uppercase in [false, true] {
-                let original = candidates('e', uppercase, &[*language], false);
-                let extended = candidates('e', uppercase, &[*language], true);
+                let original = candidates('e', uppercase, &[*language], &[]);
+                let extended = candidates('e', uppercase, &[*language], &available_currencies());
                 assert!(extended.starts_with(&original), "{}", language.code());
                 assert_eq!(extended.iter().filter(|value| *value == "€").count(), 1);
             }
         }
-        assert_eq!(candidates('l', false, &[Language::Italian], true), ["£"]);
-        assert!(candidates('l', false, &[Language::Italian], false).is_empty());
-        assert_eq!(candidates('y', true, &[Language::Italian], true), ["¥"]);
+        assert_eq!(
+            candidates('l', false, &[Language::Italian], &available_currencies()),
+            ["£"]
+        );
+        assert!(candidates('l', false, &[Language::Italian], &[]).is_empty());
+        assert_eq!(
+            candidates('y', true, &[Language::Italian], &available_currencies()),
+            ["¥"]
+        );
     }
     #[test]
     fn currency_data_matches_the_shared_registry_and_combined_lists_have_no_duplicates() {
@@ -75,7 +156,7 @@ mod tests {
         for &(base, symbols) in CURRENCY_MAPS {
             assert_eq!(data[&base.to_string()], symbols);
             for uppercase in [false, true] {
-                let list = candidates(base, uppercase, Language::ALL, true);
+                let list = candidates(base, uppercase, Language::ALL, &available_currencies());
                 for symbol in symbols {
                     assert_eq!(
                         list.iter()
@@ -96,16 +177,16 @@ mod tests {
                 'e',
                 false,
                 &[Language::Italian, Language::French, Language::Spanish],
-                false
+                &[]
             ),
             vec!["è", "é", "ê", "ë"]
         );
     }
     #[test]
     fn uppercase_is_one_precomposed_character() {
-        assert_eq!(candidates('s', true, &[Language::German], false), vec!["ẞ"]);
+        assert_eq!(candidates('s', true, &[Language::German], &[]), vec!["ẞ"]);
         assert_eq!(
-            candidates('e', true, &[Language::Italian], false),
+            candidates('e', true, &[Language::Italian], &[]),
             vec!["È", "É"]
         );
     }
@@ -122,11 +203,11 @@ mod tests {
             let language = Language::from_code(code).unwrap();
             assert_eq!(language.code(), code);
             assert_eq!(
-                candidates(base, false, &[language], false),
+                candidates(base, false, &[language], &[]),
                 lower.chars().map(|c| c.to_string()).collect::<Vec<_>>()
             );
             assert_eq!(
-                candidates(base, true, &[language], false),
+                candidates(base, true, &[language], &[]),
                 upper.chars().map(|c| c.to_string()).collect::<Vec<_>>()
             );
         }
@@ -149,8 +230,8 @@ mod tests {
                 }
                 let mut reachable = Vec::new();
                 for base in ('a'..='z').chain(std::iter::once('\'')) {
-                    reachable.extend(candidates(base, false, &[*language], false));
-                    reachable.extend(candidates(base, true, &[*language], false));
+                    reachable.extend(candidates(base, false, &[*language], &[]));
+                    reachable.extend(candidates(base, true, &[*language], &[]));
                 }
                 assert!(
                     reachable.iter().any(|candidate| candidate == value),
@@ -171,7 +252,7 @@ mod tests {
             ("kk", 'a', 'ә'),
         ] {
             assert!(
-                candidates(base, false, &[Language::from_code(code).unwrap()], false)
+                candidates(base, false, &[Language::from_code(code).unwrap()], &[])
                     .contains(&expected.to_string()),
                 "{code}"
             );
@@ -188,14 +269,9 @@ mod tests {
             ("el", 'i', true, "Ϊ́"),
         ] {
             assert!(
-                candidates(
-                    base,
-                    uppercase,
-                    &[Language::from_code(code).unwrap()],
-                    false
-                )
-                .iter()
-                .any(|value| value == expected),
+                candidates(base, uppercase, &[Language::from_code(code).unwrap()], &[])
+                    .iter()
+                    .any(|value| value == expected),
                 "{code}: {expected}"
             );
         }

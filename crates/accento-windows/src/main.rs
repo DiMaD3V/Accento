@@ -16,6 +16,7 @@ mod platform_info;
 mod portable;
 #[cfg(windows)]
 mod render;
+mod startup;
 
 fn main() {
     if std::env::args().any(|arg| arg == "--diagnostics") {

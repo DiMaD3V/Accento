@@ -1,12 +1,12 @@
 # Releasing Accento
 
-The release being prepared is `0.5.0-beta.3`, a Windows x64 and universal macOS prerelease in the private `M3GA17/Accento` repository. Packaging scripts prepare files; GitHub publication is manual. The manually dispatched `Build macOS beta` workflow produces and checks Mac packages without publishing a release.
+The release being prepared is `0.5.0-beta.4`, a Windows x64 and universal macOS prerelease in the public `M3GA17/Accento` repository. Packaging scripts prepare files; GitHub publication is manual. The manually dispatched `Build macOS beta` workflow produces and checks Mac packages without publishing a release.
 
 The source includes Windows, Linux X11 and macOS backends. Read [the platform verification scope](cross-platform.md) before deciding which binaries to publish. Beta 1 notes and verification reports describe historical local preparation.
 
-## Beta 3 before stable 0.5.0
+## Beta 4 before stable 0.5.0
 
-Beta 3 distributes Windows and a universal Mac app before live Mac testing. Build/package checks and native WebView/IPC startup checks run unattended on Apple Silicon and Intel Mac runners with keyboard hooks disabled. Ad-hoc signing permits this test distribution without a Developer ID certificate; notarization and live input are not certified by these checks.
+Beta 4 adds the unified shell and opt-in background launch at login, and distributes Windows and a universal Mac app before live Mac testing. Build/package checks and native WebView/IPC startup checks run unattended on Apple Silicon and Intel Mac runners with keyboard hooks disabled. Ad-hoc signing permits this test distribution without a Developer ID certificate; notarization and live input are not certified by these checks.
 
 Send the Mac package and `docs/distribution/TEST-MACOS.it.txt` to the tester. Collect the machine/OS/layout, permission state, application and exact gesture for each result. Fix reported issues and recheck affected packages before preparing stable `0.5.0`; publishing the beta does not automatically promote it to stable.
 
@@ -43,4 +43,4 @@ Publication requires an explicit user instruction. For an authorized release:
 3. Create a draft GitHub release with the release notes, verified platform packages and checksum files. Mark beta versions as **prerelease** and never as the latest stable release. For stable `0.5.0`, include both Windows and macOS packages, complete the verification above and leave **prerelease** disabled.
 4. Download the draft assets into a fresh directory. Compare hashes, sizes, names and the tag commit, then publish the verified draft.
 
-GitHub supplies source archives from the tag. Build files, staged dependencies and portable binaries stay outside Git source control. Private release downloads require repository access.
+GitHub supplies source archives from the tag. Build files, staged dependencies and portable binaries stay outside Git source control. The current repository and release downloads are public.

@@ -30,6 +30,12 @@ delay, exclude applications by executable name, or pause Accento from its icon.
 Closing settings keeps Accento running. Choose Exit from the notification icon
 to stop it. Pause other tools using the same shortcut while trying Accento.
 
+LAUNCH AT LOGIN
+In General, enable Launch at login to start Accento in the background when
+you sign in. It is initially off and applies immediately. Disable it to remove
+the login registration. Keep a portable copy in its chosen location; disable
+launch at login before moving or deleting that copy.
+
 BETA STATUS
 The beta is unsigned. Windows may display an unknown-publisher warning.
 Only run binaries obtained from a source you trust; SHA256SUMS.txt lets you
